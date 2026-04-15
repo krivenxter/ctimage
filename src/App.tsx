@@ -29,8 +29,15 @@ const INITIAL_OBJECTS: SceneObject[] = [
 
 import { GoogleGenAI } from "@google/genai";
 
+
 const aiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
-const proxyBaseUrl = import.meta.env.VITE_PROXY_API_BASE_URL; // e.g., https://api.proxyapi.ru/google/v1
+const proxyBaseUrl = import.meta.env.VITE_PROXY_API_BASE_URL;
+
+// Поможет вам понять, что видит приложение в Vercel
+console.log("Config check:", {
+  hasKey: !!aiKey,
+  proxyUrl: proxyBaseUrl || "Direct to Google (Default)"
+});
 
 const ai = new GoogleGenAI({ 
   apiKey: aiKey,
