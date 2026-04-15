@@ -33,15 +33,16 @@ import { GoogleGenAI } from "@google/genai";
 const aiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
 const proxyBaseUrl = import.meta.env.VITE_PROXY_API_BASE_URL;
 
-// Поможет вам понять, что видит приложение в Vercel
-console.log("Config check:", {
-  hasKey: !!aiKey,
-  proxyUrl: proxyBaseUrl || "Direct to Google (Default)"
-});
+// ДИАГНОСТИКА: Откройте консоль браузера (F12) на Vercel, чтобы увидеть это
+console.log("--- AI CONFIG DEBUG ---");
+console.log("API Key present:", !!aiKey);
+console.log("Proxy URL:", proxyBaseUrl || "NOT SET (Using default Google URL)");
+console.log("-----------------------");
 
+// Инициализация с явной проверкой
 const ai = new GoogleGenAI({ 
   apiKey: aiKey,
-  ...(proxyBaseUrl ? { baseUrl: proxyBaseUrl } : {})
+  ...(proxyBaseUrl ? { baseUrl: proxyBaseUrl.replace(/\/$/, '') } : {})
 });
 
 export default function App() {
