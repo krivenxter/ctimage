@@ -1,0 +1,6 @@
+{
+  "name": "Calltouch Prompt Studio",
+  "description": "3D composition tool for generating Calltouch-style AI image prompts with real-time feedback.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}

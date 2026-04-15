@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono: "JetBrains Mono", "Courier New", Courier, monospace;
+  
+  --color-brand-blue: #19BCE5;
+  --color-brand-blue-dark: #054777;
+  --color-brand-purple: #DB6EEE;
+  --color-brand-purple-dark: #962AD5;
+  --color-brand-beige: #F1EEE4;
+  --color-brand-white: #FFFFFF;
+  --color-text-main: #1A1A1A;
+  --color-border-subtle: rgba(0,0,0,0.08);
+}
+
+@layer base {
+  body {
+    @apply font-sans bg-brand-beige text-text-main overflow-hidden;
+  }
+}
+
+.panel-shadow {
+  box-shadow: 0 0 0 1px var(--color-border-subtle);
+}
+
+.prompt-gradient {
+  background: linear-gradient(135deg, var(--color-brand-blue) 0%, var(--color-brand-purple) 100%);
+}
+
+.grid-floor {
+  background-image: 
+    linear-gradient(rgba(0,0,0,0.08) 1px, transparent 1px), 
+    linear-gradient(90deg, rgba(0,0,0,0.08) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
