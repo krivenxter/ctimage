@@ -31,7 +31,8 @@ import { GoogleGenAI } from "@google/genai";
 
 
 const aiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
-const proxyBaseUrl = import.meta.env.VITE_PROXY_API_BASE_URL;
+// Временно замените эту строку в App.tsx для теста:
+const proxyBaseUrl = "https://api.proxyapi.ru/google/v1";
 
 // ДИАГНОСТИКА: Откройте консоль браузера (F12) на Vercel, чтобы увидеть это
 console.log("--- AI CONFIG DEBUG ---");
