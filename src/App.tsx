@@ -32,6 +32,8 @@ const aiKey = 'sk-44hinLzDr8QET2eqSKPYmFkMPff7qTCF';
 const proxyBaseUrl = 'https://api.proxyapi.ru/google'; 
 // ------------------------------------------------
 
+console.log("%c !!! РАБОТАЕТ НОВАЯ ВЕРСИЯ С FETCH !!! ", "background: #222; color: #bada55; font-size: 20px;");
+
 export default function App() {
   const [objects, setObjects] = useState<SceneObject[]>(INITIAL_OBJECTS);
   const [selectedId, setSelectedId] = useState<string | null>(null);
