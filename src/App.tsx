@@ -32,19 +32,6 @@ import { GoogleGenAI } from "@google/genai";
 const aiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
 const proxyBaseUrl = import.meta.env.VITE_PROXY_API_BASE_URL || 'https://api.proxyapi.ru/google';
 
-// Настройка для ProxyAPI, чтобы он принимал Bearer токен и правильный адрес
-const ai = new GoogleGenAI({ 
-  apiKey: aiKey,
-  baseUrl: proxyBaseUrl.replace(/\/$/, ''),
-});
-
-// Кастомный fetch для поддержки заголовка Bearer (многие прокси требуют именно его)
-const customRequestOptions = {
-  customHeaders: {
-    'Authorization': `Bearer ${aiKey}`
-  }
-};
-
 export default function App() {
   const [objects, setObjects] = useState<SceneObject[]>(INITIAL_OBJECTS);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -103,26 +90,46 @@ export default function App() {
     setError(null);
     
     try {
-      const response = await ai.models.generateContent({
-        model: 'gemini-2.0-flash', // Используем более стабильную модель для генерации
-        contents: {
-          parts: [
-            {
-              text: `Generate a high-quality 3D render based on this prompt: ${prompt}. 
-              The style should be minimalistic, playful UI fintech aesthetic with vivid contrast. 
-              The background should be a solid color as specified in the prompt.`,
-            },
-          ],
-        },
-        config: {
-          imageConfig: {
-            aspectRatio: "1:1",
-          },
-        },
-      }, customRequestOptions); // Передаем заголовки здесь
+      // Используем прямой fetch запрос как в вашем Python примере
+      // Это гарантирует, что запрос уйдет на прокси с правильными заголовками
+      const model = 'gemini-2.5-flash-image'; // Или 'gemini-2.5-flash-image' если прокси его требует
+      const url = `${proxyBaseUrl.replace(/\/$/, '')}/v1beta/models/${model}:generateContent`;
 
-      if (response.candidates && response.candidates[0]?.content?.parts) {
-        for (const part of response.candidates[0].content.parts) {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${aiKey}`
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                {
+                  text: `Generate a high-quality 3D render based on this prompt: ${prompt}. 
+                  The style should be minimalistic, playful UI fintech aesthetic with vivid contrast. 
+                  The background should be a solid color as specified in the prompt.`
+                }
+              ]
+            }
+          ],
+          generationConfig: {
+            imageConfig: {
+              aspectRatio: "1:1"
+            }
+          }
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || `HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.candidates && data.candidates[0]?.content?.parts) {
+        for (const part of data.candidates[0].content.parts) {
           if (part.inlineData) {
             const base64Data = part.inlineData.data;
             setGeneratedImage(`data:image/png;base64,${base64Data}`);
@@ -136,8 +143,12 @@ export default function App() {
       console.error("Generation failed:", err);
       
       let errorMessage = "Generation failed. Please try again.";
-      if (err.message?.includes("429") || err.status === 429 || err.message?.includes("RESOURCE_EXHAUSTED")) {
+      if (err.message?.includes("429") || err.message?.includes("RESOURCE_EXHAUSTED")) {
         errorMessage = "Quota exceeded (429). Please wait a moment or check your API limits.";
+      } else if (err.message?.includes("API key not valid")) {
+        errorMessage = "API key not valid. Check your VITE_GEMINI_API_KEY and Proxy settings.";
+      } else {
+        errorMessage = err.message || errorMessage;
       }
       
       setError(errorMessage);
