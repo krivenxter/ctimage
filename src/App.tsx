@@ -27,10 +27,10 @@ const INITIAL_OBJECTS: SceneObject[] = [
   }
 ];
 
-import { GoogleGenAI } from "@google/genai";
-
-const aiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
-const proxyBaseUrl = import.meta.env.VITE_PROXY_API_BASE_URL || 'https://api.proxyapi.ru/google';
+// --- ХАРДКОД НАСТРОЕК (Вставь свои данные сюда) ---
+const aiKey = 'sk-44hinLzDr8QET2eqSKPYmFkMPff7qTCF'; 
+const proxyBaseUrl = 'https://api.proxyapi.ru/google'; 
+// ------------------------------------------------
 
 export default function App() {
   const [objects, setObjects] = useState<SceneObject[]>(INITIAL_OBJECTS);
