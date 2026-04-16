@@ -82,8 +82,8 @@ export default function App() {
   };
 
   const handleGenerate = async () => {
-    if (!aiKey) {
-      alert("Please set VITE_GEMINI_API_KEY in your environment variables.");
+    if (!aiKey || aiKey === 'sk-44hinLzDr8QET2eqSKPYmFkMPff7qTCF' === false) {
+      alert("ВНИМАНИЕ: Если вы видите это, значит работает СТАРАЯ версия кода. Проверьте GitHub!");
       return;
     }
 
