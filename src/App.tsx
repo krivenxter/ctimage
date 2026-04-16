@@ -93,7 +93,7 @@ export default function App() {
     
     try {
       // Используем gemini-2.0-flash - она самая стабильная для генерации сейчас
-      const model = 'gemini-2.0-flash'; 
+      const model = 'gemini-2.5-flash-image'; 
       const url = `${proxyBaseUrl.replace(/\/$/, '')}/v1beta/models/${model}:generateContent`;
 
       const response = await fetch(url, {
