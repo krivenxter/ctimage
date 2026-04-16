@@ -29,22 +29,21 @@ const INITIAL_OBJECTS: SceneObject[] = [
 
 import { GoogleGenAI } from "@google/genai";
 
-
 const aiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
-// Временно замените эту строку в App.tsx для теста:
-const proxyBaseUrl = "https://api.proxyapi.ru/google/v1";
+const proxyBaseUrl = import.meta.env.VITE_PROXY_API_BASE_URL || 'https://api.proxyapi.ru/google';
 
-// ДИАГНОСТИКА: Откройте консоль браузера (F12) на Vercel, чтобы увидеть это
-console.log("--- AI CONFIG DEBUG ---");
-console.log("API Key present:", !!aiKey);
-console.log("Proxy URL:", proxyBaseUrl || "NOT SET (Using default Google URL)");
-console.log("-----------------------");
-
-// Инициализация с явной проверкой
+// Настройка для ProxyAPI, чтобы он принимал Bearer токен и правильный адрес
 const ai = new GoogleGenAI({ 
   apiKey: aiKey,
-  ...(proxyBaseUrl ? { baseUrl: proxyBaseUrl.replace(/\/$/, '') } : {})
+  baseUrl: proxyBaseUrl.replace(/\/$/, ''),
 });
+
+// Кастомный fetch для поддержки заголовка Bearer (многие прокси требуют именно его)
+const customRequestOptions = {
+  customHeaders: {
+    'Authorization': `Bearer ${aiKey}`
+  }
+};
 
 export default function App() {
   const [objects, setObjects] = useState<SceneObject[]>(INITIAL_OBJECTS);
@@ -105,7 +104,7 @@ export default function App() {
     
     try {
       const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash-image',
+        model: 'gemini-2.0-flash', // Используем более стабильную модель для генерации
         contents: {
           parts: [
             {
@@ -120,7 +119,7 @@ export default function App() {
             aspectRatio: "1:1",
           },
         },
-      });
+      }, customRequestOptions); // Передаем заголовки здесь
 
       if (response.candidates && response.candidates[0]?.content?.parts) {
         for (const part of response.candidates[0].content.parts) {
