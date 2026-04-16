@@ -82,8 +82,8 @@ export default function App() {
   };
 
   const handleGenerate = async () => {
-    if (!aiKey || aiKey === 'sk-44hinLzDr8QET2eqSKPYmFkMPff7qTCF' === false) {
-      alert("ВНИМАНИЕ: Если вы видите это, значит работает СТАРАЯ версия кода. Проверьте GitHub!");
+    if (!aiKey || aiKey.startsWith('sk-') === false) {
+      alert("ОШИБКА: Вы видите это сообщение, потому что работает СТАРАЯ версия кода или ключ не прописан в App.tsx!");
       return;
     }
 
@@ -175,7 +175,7 @@ export default function App() {
             referrerPolicy="no-referrer"
           />
           <div className="h-4 w-[1px] bg-black/10" />
-          <span className="font-light opacity-50 text-sm tracking-widest uppercase">PROMPT STUDIO</span>
+          <span className="font-bold text-cyan-500 text-sm tracking-widest uppercase">PROMPT STUDIO V3 - DIRECT FETCH</span>
         </div>
       </header>
 
