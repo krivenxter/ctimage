@@ -32,7 +32,7 @@ const aiKey = 'sk-44hinLzDr8QET2eqSKPYmFkMPff7qTCF';
 const proxyBaseUrl = 'https://api.proxyapi.ru/google'; 
 // ------------------------------------------------
 
-console.log("%c !!! РАБОТАЕТ НОВАЯ ВЕРСИЯ С FETCH пидор !!! ", "background: #222; color: #bada55; font-size: 20px;");
+console.log("%c !!! РАБОТАЕТ НОВАЯ ВЕРСИЯ С FETCH !!! ", "background: #222; color: #bada55; font-size: 20px;");
 
 export default function App() {
   const [objects, setObjects] = useState<SceneObject[]>(INITIAL_OBJECTS);
@@ -92,9 +92,8 @@ export default function App() {
     setError(null);
     
     try {
-      // Используем прямой fetch запрос как в вашем Python примере
-      // Это гарантирует, что запрос уйдет на прокси с правильными заголовками
-      const model = 'gemini-2.5-flash-image'; // Или 'gemini-2.5-flash-image' если прокси его требует
+      // Используем gemini-2.0-flash - она самая стабильная для генерации сейчас
+      const model = 'gemini-2.0-flash'; 
       const url = `${proxyBaseUrl.replace(/\/$/, '')}/v1beta/models/${model}:generateContent`;
 
       const response = await fetch(url, {
@@ -116,19 +115,20 @@ export default function App() {
             }
           ],
           generationConfig: {
-            imageConfig: {
-              aspectRatio: "1:1"
-            }
+            // Imagen 3 параметры
+            candidateCount: 1,
           }
         })
       });
 
       if (!response.ok) {
         const errorData = await response.json();
+        console.error("ProxyAPI Error Details:", errorData);
         throw new Error(errorData.error?.message || `HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
+      console.log("API Response:", data);
 
       if (data.candidates && data.candidates[0]?.content?.parts) {
         for (const part of data.candidates[0].content.parts) {
@@ -154,10 +154,6 @@ export default function App() {
       }
       
       setError(errorMessage);
-      
-      // Fallback to a seeded placeholder
-      const seed = Math.floor(Math.random() * 1000);
-      setGeneratedImage(`https://picsum.photos/seed/${seed}/800/800`);
     } finally {
       setIsGenerating(false);
     }
